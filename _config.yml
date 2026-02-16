@@ -1,0 +1,14 @@
+title: Mark Milian
+email: mmilian@bloomberg.net
+description: >-
+  Deputy Editor at Bloomberg Businessweek.
+baseurl: ""
+url: "https://markmilian.com"
+
+theme: null
+markdown: kramdown
+permalink: /blog/:year/:month/:day/:title/
+
+collections:
+  posts:
+    output: true
