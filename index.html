@@ -46,48 +46,22 @@ title: Home
 
 
   <h2>Writing at Bloomberg</h2>
-  <ul class="blog-list" id="bloomberg-rss-list">
-    <li><span class="post-meta">Loading latest headlines…</span></li>
-  </ul>
+  {% assign bb_items = site.data.bloomberg.items %}
+  {% if bb_items and bb_items.size > 0 %}
+    <ul class="blog-list">
+      {% for item in bb_items limit: 5 %}
+        <li>
+          <a href="{{ item.link }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+          {% if item.date %}
+            <div class="post-meta">{{ item.date | date: "%B %-d, %Y" }}</div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="post-meta">Latest headlines are temporarily unavailable.</p>
+  {% endif %}
   <p class="read-more"><a href="https://www.bloomberg.com/authors/AQwGLUGiAUs/mark-milian" target="_blank" rel="noopener noreferrer">View all writing →</a></p>
-
-  <script>
-    (async function () {
-      const list = document.getElementById('bloomberg-rss-list');
-      if (!list) return;
-
-      const feedUrl = 'https://www.bloomberg.com/authors/AQwGLUGiAUs/mark-milian.rss';
-      const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(feedUrl);
-
-      try {
-        const res = await fetch(proxied);
-        if (!res.ok) throw new Error('RSS fetch failed');
-
-        const xmlText = await res.text();
-        const xml = new DOMParser().parseFromString(xmlText, 'text/xml');
-        const items = Array.from(xml.querySelectorAll('item')).slice(0, 5);
-
-        if (!items.length) throw new Error('No items found');
-
-        list.innerHTML = items.map((item) => {
-          const title = (item.querySelector('title')?.textContent || 'Untitled').trim();
-          const link = (item.querySelector('link')?.textContent || '#').trim();
-          const dateRaw = (item.querySelector('pubDate')?.textContent || '').trim();
-          const date = dateRaw
-            ? new Date(dateRaw).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-            : '';
-
-          return `
-            <li>
-              <a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>
-              ${date ? `<div class="post-meta">${date}</div>` : ''}
-            </li>`;
-        }).join('');
-      } catch (e) {
-        list.innerHTML = '<li><span class="post-meta">Unable to load headlines right now.</span></li>';
-      }
-    })();
-  </script>
 
   <p class="post-meta" style="margin-top: 16px;">
     (<a href="https://www.latimes.com/archives/blogs/technology-blog/story/2009-09-30/how-google-wave-could-transform-journalism" target="_blank" rel="noopener noreferrer">All-time worst prediction</a>)

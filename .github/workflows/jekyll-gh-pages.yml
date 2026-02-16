@@ -30,6 +30,47 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      - name: Fetch Bloomberg RSS for homepage module
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+          import xml.etree.ElementTree as ET
+          from email.utils import parsedate_to_datetime
+
+          items = []
+          try:
+            feed_url = "https://www.bloomberg.com/authors/AQwGLUGiAUs/mark-milian.rss"
+            req = urllib.request.Request(feed_url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+              data = resp.read()
+
+            root = ET.fromstring(data)
+            channel = root.find("channel")
+            if channel is not None:
+              for item in channel.findall("item")[:5]:
+                title = (item.findtext("title") or "").strip()
+                link = (item.findtext("link") or "").strip()
+                pub = (item.findtext("pubDate") or "").strip()
+                iso = ""
+                if pub:
+                  try:
+                    iso = parsedate_to_datetime(pub).isoformat()
+                  except Exception:
+                    iso = ""
+                if title and link:
+                  items.append({"title": title, "link": link, "date": iso})
+          except Exception as e:
+            print(f"RSS fetch failed: {e}")
+
+          os.makedirs("_data", exist_ok=True)
+          with open("_data/bloomberg.json", "w", encoding="utf-8") as f:
+            json.dump({"items": items}, f, ensure_ascii=False, indent=2)
+          print(f"Wrote _data/bloomberg.json with {len(items)} items")
+          PY
+
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
