@@ -57,6 +57,7 @@ p {
   height: 170px;
   border-radius: 999px;
   object-fit: cover;
+  object-position: calc(50% + 50px) center;
   display: block;
   margin: 16px auto 20px;
   border: 3px solid #fff;
@@ -64,27 +65,19 @@ p {
 }
 
 .links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   margin-top: 12px;
 }
 
 .links a {
-  display: inline-block;
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--text);
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  display: block;
+  margin: 0 0 4px;
+  color: var(--accent);
+  text-decoration: underline;
+  font-size: 1rem;
 }
 
 .links a:hover {
-  transform: translateY(-1px);
-  border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-hover);
 }
 
 .blog-list {
